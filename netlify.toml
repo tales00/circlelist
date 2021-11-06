@@ -1,6 +1,9 @@
 [functions]
   directory = "functions"
 
+[functions.listMeta]
+  included_files = ["index.html"]
+
 [[redirects]]
   from = "/in/:evId/:slug"
   to = "/.netlify/functions/listMeta/:evId/:slug"
