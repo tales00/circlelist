@@ -1,0 +1,8 @@
+[functions]
+  directory = "functions"
+
+[[redirects]]
+  from = "/in/:evId/:slug"
+  to = "/.netlify/functions/listMeta/:evId/:slug"
+  status = 200
+  force = true

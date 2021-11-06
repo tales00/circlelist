@@ -1,7 +1,8 @@
 <template lang="pug">
 .listView
-  | {{ evName }} / 
-  | {{ listId }}
+  | {{ evName }} / {{ listId }}
+  .btn
+    router-link(:to="{name: 'Home'}") back
 </template>
 
 <script>

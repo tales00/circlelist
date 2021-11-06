@@ -8,7 +8,11 @@ const routes = [
     component: Home,
   },
   {
-    path: '/:evName/:listId',
+    path: '/in',
+    redirect: '/',
+  },
+  {
+    path: '/in/:evName/:listId',
     name: 'listView',
     props: true,
     // route level code-splitting
