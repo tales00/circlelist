@@ -2,7 +2,7 @@
   directory = "functions/"
 
 [functions.listMeta]
-  # included_files = ["../dist/index.html"]
+  included_files = ["./listMeta.html"]
 
 [[redirects]]
   from = "/in/:evId/:slug"
