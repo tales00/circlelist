@@ -1,9 +1,9 @@
 [functions]
   directory = "functions/"
-  node_bundler = "esbuild"
+  # node_bundler = "esbuild"
 
 [functions.listMeta]
-  included_files = ["functions/listMeta/listMeta.html"]
+  # included_files = ["functions/listMeta/listMeta.html"]
 
 [functions.incf]
   included_files = ["functions/incf/test.json"]
