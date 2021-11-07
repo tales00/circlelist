@@ -5,9 +5,11 @@ const handler = (event) => {
   const idx = params.indexOf('in') || params.indexOf('listMeta');
   const [evName, slug] = params.splice(idx + 1);
 
-  let htmlText = fs.readFileSync(require.resolve('./index.html'), 'utf8');
+  let htmlText = fs.readFileSync(require.resolve('./listMeta.html'), 'utf8');
+  // let htmlText = fs.readFileSync('./listMeta.html', 'utf8');
 
   htmlText = htmlText.replace('{{evName}}', evName + ' | ');
+  htmlText = htmlText.replace('{{slug}}', slug);
   return {
     statusCode: 200,
     // body: JSON.stringify({

@@ -1,8 +1,8 @@
 [functions]
-  directory = "functions"
+  directory = "functions/"
 
 [functions.listMeta]
-  included_files = ["index.html"]
+  # included_files = ["../dist/index.html"]
 
 [[redirects]]
   from = "/in/:evId/:slug"
