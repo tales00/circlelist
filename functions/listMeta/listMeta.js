@@ -5,7 +5,7 @@ const handler = (event) => {
   const [evName, slug] = params.splice(idx + 1);
 
   let htmlText = fs.readFileSync(
-    require.resolve('functions/listMeta/listMeta.html'),
+    require.resolve('./functions/listMeta/listMeta.html'),
     'utf8',
   );
   // let htmlText = fs.readFileSync('./listMeta.html', 'utf8');
