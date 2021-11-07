@@ -5,7 +5,7 @@
   included_files = ["./listMeta.html"]
 
 [functions.incf]
-  included_files = ["./functions/incf/test.json"]
+  included_files = ["test.json"]
 
 [[redirects]]
   from = "/in/:evId/:slug"
