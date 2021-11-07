@@ -1,11 +1,12 @@
 [functions]
   directory = "functions/"
+  node_bundler = "esbuild"
 
 [functions.listMeta]
   included_files = ["./listMeta.html"]
 
 [functions.incf]
-  included_files = ["test.json"]
+  included_files = ["./incf/test.json"]
 
 [[redirects]]
   from = "/in/:evId/:slug"
