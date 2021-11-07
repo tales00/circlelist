@@ -8,7 +8,7 @@ const handler = (event) => {
   //   require.resolve('./functions/listMeta/listMeta.html'),
   //   'utf8',
   // );
-  let htmlText = fs.readFileSync('./listMeta.html', 'utf8');
+  let htmlText = fs.readFileSync('./functions/listMeta/listMeta.html', 'utf8');
 
   htmlText = htmlText.replace('{{evName}}', evName + ' | ');
   htmlText = htmlText.replace('{{slug}}', slug);
