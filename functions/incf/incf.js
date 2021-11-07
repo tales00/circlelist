@@ -5,7 +5,13 @@ const handler = (event) => {
   // const idx = params.indexOf('in') || params.indexOf('listMeta');
   // const [evName, slug] = params.splice(idx + 1);
 
-  let { foo } = require('./test.json');
+  let foo;
+  try {
+    let test = require('./test.json');
+    foo = test.foo;
+  } catch (error) {
+    foo = error;
+  }
 
   return {
     statusCode: 200,

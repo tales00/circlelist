@@ -4,6 +4,9 @@
 [functions.listMeta]
   included_files = ["./listMeta.html"]
 
+[functions.incf]
+  included_files = ["./test.json"]
+
 [[redirects]]
   from = "/in/:evId/:slug"
   to = "/.netlify/functions/listMeta/:evId/:slug"
