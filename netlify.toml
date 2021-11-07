@@ -3,10 +3,10 @@
   node_bundler = "esbuild"
 
 [functions.listMeta]
-  included_files = ["./listMeta.html"]
+  included_files = ["functions/listMeta/listMeta.html"]
 
 [functions.incf]
-  included_files = ["./incf/test.json"]
+  included_files = ["functions/incf/test.json"]
 
 [[redirects]]
   from = "/in/:evId/:slug"

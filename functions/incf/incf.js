@@ -7,7 +7,7 @@ const handler = (event) => {
 
   let foo;
   try {
-    let test = require('./test.json');
+    let test = require('functions/incf/test.json');
     foo = test.foo;
   } catch (error) {
     foo = error;
