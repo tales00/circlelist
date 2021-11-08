@@ -1,6 +1,6 @@
-const handler = (event) => {
-  // const path = require('path');
+const handler = async (event) => {
   const fs = require('fs');
+  const path = require('path');
   // const resolved = (process.env.LAMBDA_TASK_ROOT)? path.resolve(process.env.LAMBDA_TASK_ROOT, fileName):path.resolve(__dirname, fileName)
 
   // fs.readFile(resolved, "utf8", (err, results) => console.log(results))
@@ -9,7 +9,9 @@ const handler = (event) => {
   const idx = params.indexOf('in') || params.indexOf('listMeta');
   const [evName, slug] = params.splice(idx + 1);
 
-  let htmlText = fs.readFileSync('listMeta.html', 'utf8');
+  let htmlText = await fs.readFile(path.join(__dirname, 'listMeta.html'), {
+    encoding: 'utf-8',
+  });
   // let htmlText = fs.readFileSync('./functions/listMeta/listMeta.html', 'utf8');
 
   htmlText = htmlText.replace('{{evName}}', evName + ' | ');
