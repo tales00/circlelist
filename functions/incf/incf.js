@@ -1,13 +1,13 @@
 // const fs = require('fs');
 
-const handler = (event) => {
-  // const params = event.path.split('/');
-  // const idx = params.indexOf('in') || params.indexOf('listMeta');
-  // const [evName, slug] = params.splice(idx + 1);
+const handler = async (event) => {
+  const params = event.path.split('/');
+  const idx = params.indexOf('incf');
+  const [evName, slug] = params.splice(idx + 1);
 
   let foo;
   try {
-    let test = require('./test.json');
+    let test = await require('./test.json');
     foo = test.foo;
   } catch (error) {
     foo = error;
@@ -17,6 +17,9 @@ const handler = (event) => {
     statusCode: 200,
     body: JSON.stringify({
       foo,
+      evName,
+      slug,
+      event,
     }),
   };
 };
