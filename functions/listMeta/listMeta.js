@@ -16,7 +16,7 @@ const handler = async (event) => {
     path.join(__dirname, './index.html'),
     'utf-8',
   );
-  let htmlText = fs.readFileSync('./index.html', 'utf8');
+  // let htmlText = fs.readFileSync('./index.html', 'utf8');
   // let htmlText = require('./index.txt');
 
   htmlText = htmlText.replace('<title>', `<title>${evName} | `);
