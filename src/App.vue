@@ -1,44 +1,41 @@
 <template lang="pug">
 AppScaffold(
-  :mainBgColor="'hsl(0, 0%, 92%)'"
+  mainBgColor="hsl(0, 0%, 92%)"
+  mainMaxWidth="var(--app-max-width)"
+  :isHeaderSticky="isHeaderSticky"
+  :isFooterSticky="isFooterSticky"
 )
   template(v-slot:header)
-    | HEADER
+    component(:is="headerComponent")
+
+  template(v-slot:footer)
+    component(
+      :is="footerComponent"
+    )
+
   router-view
 </template>
 
 <script>
 // import { defineComponent } from '@vue/composition-api';
 import AppScaffold from '@/components/AppScaffold.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: 'home',
   components: {
     AppScaffold,
   },
+  computed: {
+    ...mapState('app/', [
+      'headerComponent',
+      'footerComponent',
+      'isHeaderSticky',
+      'isFooterSticky',
+    ]),
+  },
   // setup() {},
 };
 </script>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
+<style lang="scss"></style>

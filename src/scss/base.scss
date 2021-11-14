@@ -34,7 +34,7 @@ $cjk-jp-font-family: $base-font-family, 'Noto Sans JP', 'Hiragino Sans',
   --size-xl: #{$size-xl}; // 1800
   --size-xxl: #{$size-xxl}; // 2400
 
-  --app-max-width: auto;
+  --app-max-width: 42rem;
   --cell: 0.5rem;
   --box-shadow: 0.2rem 0.2rem 1rem;
   --color-shadow: hsl(0, 0%, 96%);
@@ -57,7 +57,7 @@ html {
 
   // font-size: clamp(12px, calc(100vw / 30), 20px);
   // font-size: clamp(14px, calc(100vw / 34), 22px);
-  font-size: clamp(14px, calc(100vw / 36), 28px);
+  font-size: clamp(12px, calc(100vw / 42), 22px);
   line-height: 1.2;
   // height: 100%;
   height: -webkit-fill-available;
@@ -68,7 +68,7 @@ html {
   }
 }
 body {
-  max-width: var(--app-max-width);
+  // max-width: var(--app-max-width);
   margin: 0;
   padding: 0;
 
