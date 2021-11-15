@@ -34,7 +34,7 @@ $cjk-jp-font-family: $base-font-family, 'Noto Sans JP', 'Hiragino Sans',
   --size-xl: #{$size-xl}; // 1800
   --size-xxl: #{$size-xxl}; // 2400
 
-  --app-max-width: 42rem;
+  --app-max-width: auto;
   --cell: 0.5rem;
   --box-shadow: 0.2rem 0.2rem 1rem;
   --color-shadow: hsl(0, 0%, 96%);

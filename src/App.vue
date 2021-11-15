@@ -5,7 +5,7 @@ AppScaffold(
   :isHeaderSticky="isHeaderSticky"
   :isFooterSticky="isFooterSticky"
 )
-  template(v-slot:header)
+  template(v-if="headerComponent" v-slot:header)
     component(:is="headerComponent")
 
   template(v-slot:footer)
@@ -35,6 +35,9 @@ export default {
     ]),
   },
   // setup() {},
+  // created() {
+  //   console.log('app created');
+  // },
 };
 </script>
 

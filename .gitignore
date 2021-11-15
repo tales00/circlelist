@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 /dist
-/functions/listMeta/index.html
+functions/listMeta/index.html
 
 
 # local env files
