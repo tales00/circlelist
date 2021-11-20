@@ -72,7 +72,7 @@ export const getSettings = (sheetID) =>
       };
       return rows.reduce((groups, setting) => {
         let { key } = setting;
-        const { group, value, description } = setting;
+        const { group, value, description, type } = setting;
         if (key in setting_name_zh_eng) {
           key = setting_name_zh_eng[key];
         }
@@ -83,14 +83,14 @@ export const getSettings = (sheetID) =>
         if (!(current_group in groups)) {
           groups[current_group] = [];
         }
-        groups[current_group].push({ key, value, description });
+        groups[current_group].push({ key, value, description, type });
         return groups;
       }, {});
     })
     .then((setting) => {
       setting.config = setting.config.reduce(
-        (config, { key, value, description }) => {
-          config[key] = { value, description };
+        (config, { key, value, description, type }) => {
+          config[key] = { value, description, type };
           return config;
         },
         {},
@@ -142,7 +142,7 @@ export const getList = (sheetID) =>
         let { space, circle_name, info_url, description } = circle;
 
         if (day) {
-          current_day = `day${day}`;
+          current_day = day;
         }
         if (!(current_day in days)) {
           days[current_day] = [];

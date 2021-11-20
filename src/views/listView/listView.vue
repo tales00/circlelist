@@ -1,10 +1,14 @@
 <template lang="pug">
 .listView
-  h1.event_name {{ setting.config.event_name?.value || evName }}
   circle_list_table(
+    v-if="viewing_page === 'list'"
     :header="setting.header"
-    :list="list[`day${view_day}`]"
+    :list="list_search"
   )
+  venue_maps(
+    v-if="viewing_page === 'map'"
+  )
+
 </template>
 
 <script>
@@ -13,12 +17,14 @@ import { mapMutations, mapState, mapGetters, mapActions } from 'vuex';
 import listView_header from './listView_header.vue';
 import listView_footer from './listView_footer.vue';
 import circle_list_table from './circle_list_table.vue';
+import venue_maps from './venue_maps.vue';
 
 export default {
   name: 'listView',
   props: ['evName', 'listId'],
   components: {
     circle_list_table,
+    venue_maps,
     // listView_header,
     // listView_footer,
   },
@@ -46,11 +52,17 @@ export default {
     },
   },
   computed: {
-    ...mapState('viewing_list/', ['setting', 'list', 'view_day']),
+    ...mapState('viewing_list/', [
+      'setting',
+      'list',
+      'viewing_page',
+      'viewing_list',
+    ]),
     ...mapGetters('viewing_list/', [
-      'listName',
+      'eventName',
       'allNames',
       'shortestName',
+      'list_search',
       'isEvNameCurrect',
     ]),
   },
@@ -81,6 +93,8 @@ export default {
     // 1gN2jSRf_vha_NGzzZmo4eoRU0uB4EB5tRzSZfJWmhZM
     // ch10
     // 1vmI_o2mwvSgHRu971IheGiT_3lRBwWh_Mn6DKg1qvRE
+    // ffk14
+    // 1NbL2YpuM8jLFDEf0Og_Gfk-kGzOTzJO08wqWrZEwmk0
   },
   // mounted() {},
 };

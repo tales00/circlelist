@@ -35,9 +35,10 @@ export default {
     ]),
   },
   // setup() {},
-  // created() {
-  //   console.log('app created');
-  // },
+  created() {
+    console.log('app created');
+    document.querySelector('html').setAttribute('lang', 'zh-TW');
+  },
 };
 </script>
 
