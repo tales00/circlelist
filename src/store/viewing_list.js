@@ -2,14 +2,16 @@ import { getSettings, getList } from '@/api/g-sheets';
 let default_state = () => ({
   evName: undefined,
   listId: undefined,
+  status: {
+    isLoading: false,
+    // isReady: false,
+    isError: false,
+    errorMessage: '',
+  },
   setting: {
-    header: {
-      space: undefined,
-      circle_name: undefined,
-      info_url: undefined,
-      description: undefined,
-    },
+    header: {},
     config: [],
+    list: {},
     venue_map: [],
     custom: [],
   },
@@ -44,7 +46,7 @@ export default {
       );
     },
     list_names(state) {
-      return Object.keys(state.list);
+      return state.setting.list.map((_list) => _list.key);
     },
     list_search(state) {
       const { list, viewing_list } = state;
@@ -55,7 +57,7 @@ export default {
         queryString === '?' ||
         queryString === 'url:'
       ) {
-        return list[viewing_list];
+        return list[viewing_list] || [];
       }
 
       queryString = queryString.toLowerCase();
@@ -98,6 +100,10 @@ export default {
         );
       });
     },
+    isReady(state) {
+      const { isLoading, isError } = state.status;
+      return !isLoading && !isError;
+    },
     isEvNameCurrect(state, getters) {
       return getters.allNames.includes(state.evName);
     },
@@ -106,20 +112,33 @@ export default {
     },
   },
   mutations: {
-    setListData(state, { setting, list }) {
-      Object.keys(state.setting).forEach((settingKey) => {
-        state.setting[settingKey] = setting[settingKey];
+    setStatus(state, { name, code }) {
+      if (name in state.status) {
+        state.status[name] = code;
+      }
+    },
+    setSetting(state, setting) {
+      Object.keys(setting).forEach((settingKey) => {
+        if (settingKey in state.setting) {
+          // console.log('setSetting', {
+          //   key: settingKey,
+          //   value: setting[settingKey],
+          // });
+          state.setting[settingKey] = setting[settingKey];
+        }
       });
-      state.list = list;
+    },
+    addList(state, { name, listData }) {
+      // console.log('addList', { name, listData });
+      state.list[name] = listData;
     },
     switchViewPage(state, page_name) {
+      // console.log('switchViewPage', page_name);
       state.viewing_page = page_name;
     },
     switchViewList(state, list_name) {
-      if (list_name in state.list) {
-        state.viewing_page = 'list';
-        state.viewing_list = list_name;
-      }
+      state.viewing_page = 'list';
+      state.viewing_list = list_name;
     },
     setListQuery(state, queryString = '') {
       state.list_queryString = queryString;
@@ -127,25 +146,34 @@ export default {
   },
   actions: {
     async initFromListId({ commit, state }, { listId, evName }) {
+      commit('setStatus', { name: 'isLoading', code: true });
+
       state.listId = listId;
       state.evName = evName;
       const setting = await getSettings(listId);
-      const { header, list } = await getList(listId);
+      commit('setSetting', setting);
 
-      // todo
-      // check if list is empty
+      let header = {};
+      if (setting.list.length) {
+        setting.list.forEach(async (_listData) => {
+          const { header: thisHeader, list: thisList } = await getList(
+            listId,
+            _listData.value,
+          );
+          commit('addList', { name: _listData.key, listData: thisList });
+          header[_listData.key] = thisHeader;
+        });
+      } else {
+        commit('setStatus', { name: 'isLoading', code: false });
+        commit('setStatus', { name: 'isError', code: true });
+        commit('setStatus', { name: 'errorMessage', code: 'no-list-setting' });
+        return;
+      }
+      commit('setSetting', { header });
 
-      commit('setListData', {
-        setting: {
-          header,
-          ...setting,
-        },
-        list,
-      });
-
-      const [firstListName] = Object.keys(list);
-      state.viewing_list = firstListName;
-      state.viewing_page = 'list';
+      commit('setStatus', { name: 'isLoading', code: false });
+      commit('setStatus', { name: 'isError', code: false });
+      commit('setStatus', { name: 'errorMessage', code: '' });
     },
   },
 };

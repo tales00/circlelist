@@ -1,13 +1,15 @@
 <template lang="pug">
-.listView
+.listView(v-if="isReady")
   circle_list_table(
     v-if="viewing_page === 'list'"
-    :header="setting.header"
+    :viewing_list="viewing_list"
+    :header="setting.header[viewing_list]"
     :list="list_search"
   )
   venue_maps(
     v-if="viewing_page === 'map'"
   )
+.listView(v-else) 載入中
 
 </template>
 
@@ -31,6 +33,16 @@ export default {
   // setup() {},
   // data() { return {}; },
   watch: {
+    isReady: {
+      // immediate: true,
+      handler(isReady) {
+        if (isReady) {
+          const [firstList] = this.setting.list;
+          console.log('watch isReady', firstList.key);
+          this.switchViewList(firstList.key);
+        }
+      },
+    },
     shortestName: {
       // immediate: true,
       handler(shortName) {
@@ -48,26 +60,33 @@ export default {
             });
           }
         }
+        document.title =
+          (this.setting.config?.event_name.value || shortName) +
+          ' | circleList';
       },
     },
   },
   computed: {
     ...mapState('viewing_list/', [
+      'status',
       'setting',
       'list',
       'viewing_page',
       'viewing_list',
+      'list_count',
     ]),
     ...mapGetters('viewing_list/', [
       'eventName',
       'allNames',
       'shortestName',
       'list_search',
+      'isReady',
       'isEvNameCurrect',
     ]),
   },
   methods: {
     ...mapActions('viewing_list/', ['initFromListId']),
+    ...mapMutations('viewing_list/', ['setStatus', 'switchViewList']),
     ...mapMutations('app/', [
       'resetApp',
       'setHeader',
@@ -84,11 +103,7 @@ export default {
   },
   async created() {
     this.resetApp();
-    // 從網址夾帶的 id 讀取清單資料
-    this.initFromListId({
-      listId: this.listId,
-      evName: this.evName,
-    });
+    console.log('listView created');
     // ff37
     // 1gN2jSRf_vha_NGzzZmo4eoRU0uB4EB5tRzSZfJWmhZM
     // ch10
@@ -96,12 +111,19 @@ export default {
     // ffk14
     // 1NbL2YpuM8jLFDEf0Og_Gfk-kGzOTzJO08wqWrZEwmk0
   },
-  // mounted() {},
+  mounted() {
+    console.log('listView mounted');
+    // 從網址夾帶的 id 讀取清單資料
+    this.initFromListId({
+      listId: this.listId,
+      evName: this.evName,
+    });
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-.event_name {
-  font-size: 1.8rem;
-}
+// .event_name {
+//   font-size: 1.8rem;
+// }
 </style>

@@ -5,9 +5,7 @@ export const getSheet = ({ sheetID, tableName }) => {
   const specfySheetName = (tableName && `&sheet=${tableName}`) ?? '';
   return fetch(fetchURL + specfySheetName)
     .then((res) => res.text())
-    .then((text) => {
-      return JSON.parse(text.substr(47).slice(0, -2));
-    })
+    .then((text) => JSON.parse(text.substr(47).slice(0, -2)))
     .then((rowJson) => {
       let {
         table: { cols, rows },
@@ -100,22 +98,22 @@ export const getSettings = (sheetID) =>
     });
 
 //
-export const getList = (sheetID) =>
+export const getList = (sheetID, tableName) =>
   getSheet({
     sheetID,
-    tableName: 'circle_list',
-    headerLength: 8,
+    tableName,
   })
     .then(convertSheetRowArray)
     .then(({ cols, rows: list }) => {
-      let current_day = '0';
+      // let current_day = '0';
+
       const info_name_zh_eng = {
         編號: 'space',
         名稱: 'circle_name',
         資訊網址: 'info_url',
         描述: 'description',
       };
-      // const { space, circle_name, info_url, description } = cols;
+
       const header = {
         space: undefined,
         circle_name: undefined,
@@ -130,7 +128,8 @@ export const getList = (sheetID) =>
         }
       }
 
-      list = list.reduce((days, circle) => {
+      //
+      list = list.reduce((thisList, circle) => {
         // 轉換中文標頭
         for (let info_name_zh of Object.keys(info_name_zh_eng)) {
           if (info_name_zh in circle) {
@@ -138,18 +137,13 @@ export const getList = (sheetID) =>
             circle[info_name_eng] = circle[info_name_zh];
           }
         }
-        const { day } = circle;
+        // const { day } = circle;
         let { space, circle_name, info_url, description } = circle;
 
-        if (day) {
-          current_day = day;
-        }
-        if (!(current_day in days)) {
-          days[current_day] = [];
-        }
-        days[current_day].push({ space, circle_name, info_url, description });
-        return days;
-      }, {});
+        thisList.push({ space, circle_name, info_url, description });
+        return thisList;
+      }, []);
+
       return { header, list };
     });
 // .then((rows) => {

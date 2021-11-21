@@ -58,7 +58,7 @@ export default {
   padding: 0.5rem 1rem;
 
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   align-items: center;
 }
 
@@ -77,18 +77,18 @@ export default {
     position: relative;
     border-bottom: 2px solid transparent;
     font-size: 1.4rem;
-    padding: 0.2rem 0.8rem;
+    padding: 0.2rem 0.6rem;
 
     &.isViewing {
       border-color: saddlebrown;
       &::after {
         position: absolute;
-        top: -2px;
-        left: -2px;
+        top: -0.2rem;
+        right: -0.3rem;
         display: block;
         content: ' ';
-        width: 8px;
-        height: 8px;
+        width: 0.5rem;
+        height: 0.5rem;
         border-radius: 50%;
         background-color: red;
       }
@@ -113,7 +113,7 @@ export default {
   }
   @media screen and (min-width: $min-tablet) {
     gap: 1rem;
-    margin-right: 3rem;
+    // margin-right: 3rem;
     // transform-origin: bottom left;
     // transform: scale(1.4) translateY(-0.3rem);
 
@@ -122,8 +122,8 @@ export default {
       // border-color: hsl(0, 0%, 80%);
       // border-radius: 0.5rem;
       padding-top: 0.4rem;
-      padding-right: 0.8rem;
-      padding-left: 0.6rem;
+      // padding-right: 0.6rem;
+      // padding-left: 0.6rem;
       padding-bottom: 0;
 
       .las {
@@ -134,8 +134,8 @@ export default {
         position: absolute;
         display: block;
         font-size: 0.6rem;
-        top: 0;
-        right: 0;
+        top: -0.15rem;
+        left: 0;
         padding: 0.1rem 0.2rem;
         // background-color: ghostwhite;
         transform: translateY(-0.2rem);
