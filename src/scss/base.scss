@@ -101,6 +101,13 @@ a {
 }
 
 // some helper class
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
 .round {
   border-radius: 0.4rem;
 }

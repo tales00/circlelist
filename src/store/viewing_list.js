@@ -4,7 +4,6 @@ let default_state = () => ({
   listId: undefined,
   status: {
     isLoading: false,
-    // isReady: false,
     isError: false,
     errorMessage: '',
   },

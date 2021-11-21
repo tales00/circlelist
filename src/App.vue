@@ -1,6 +1,6 @@
 <template lang="pug">
 AppScaffold(
-  mainBgColor="hsl(0, 0%, 92%)"
+  mainBgColor="hsl(0, 0%, 94%)"
   mainMaxWidth="var(--app-max-width)"
   :isHeaderSticky="isHeaderSticky"
   :isFooterSticky="isFooterSticky"

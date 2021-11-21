@@ -1,6 +1,7 @@
 <template lang="pug">
 .listView_header
-  h1.title {{ eventName }}
+  stack
+    h1.title.ellipsis {{ eventName }}
 </template>
 
 <script>
@@ -10,8 +11,12 @@ import {
   mapGetters,
   // mapActions ,
 } from 'vuex';
+import stack from '@/components/Stack.vue';
 export default {
   name: 'listView_header',
+  components: {
+    stack,
+  },
   computed: {
     ...mapGetters('viewing_list/', [
       'eventName',
@@ -25,9 +30,11 @@ export default {
 
 <style lang="scss" scoped>
 .listView_header {
-  background-color: hsl(0, 0%, 85%);
+  background-color: hsl(0, 0%, 96%);
 }
 .title {
   margin: 0;
+  font-size: 1.4rem;
+  max-width: calc(100vw - 4rem);
 }
 </style>

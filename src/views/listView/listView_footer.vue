@@ -53,8 +53,8 @@ export default {
 
 .listView_footer {
   color: var(--text-main);
-  background-color: hsl(0, 0%, 92%);
-  border-top: 1px solid hsl(0, 0%, 80%);
+  background-color: hsl(0, 0%, 96%);
+  // border-top: 1px solid hsl(0, 0%, 80%);
   padding: 0.5rem 1rem;
 
   display: flex;
