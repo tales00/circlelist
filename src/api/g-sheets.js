@@ -78,10 +78,12 @@ export const getSettings = (sheetID) =>
         if (group) {
           current_group = group;
         }
-        if (!(current_group in groups)) {
-          groups[current_group] = [];
+        if (key) {
+          if (!(current_group in groups)) {
+            groups[current_group] = [];
+          }
+          groups[current_group].push({ key, value, description, type });
         }
-        groups[current_group].push({ key, value, description, type });
         return groups;
       }, {});
     })
@@ -93,6 +95,11 @@ export const getSettings = (sheetID) =>
         },
         {},
       );
+      ['list', 'venue_map'].forEach((group_name) => {
+        setting[group_name].forEach((item) => {
+          delete item.type;
+        });
+      });
 
       return setting;
     });
