@@ -16,7 +16,7 @@ let default_state = () => ({
   },
   list: {},
   list_queryString: '',
-  viewing_list: '',
+  viewing_list_name: '',
   viewing_page: '',
 });
 export default {
@@ -45,10 +45,17 @@ export default {
       );
     },
     list_names(state) {
-      return state.setting?.list.map((_list) => _list.key) || [];
+      return state.setting?.list.map(({ key }) => key) || [];
+    },
+    viewing_list_data(state) {
+      return (
+        state.setting?.list.find(
+          ({ key }) => key === state.viewing_list_name,
+        ) || {}
+      );
     },
     list_search(state) {
-      const { list, viewing_list } = state;
+      const { list, viewing_list_name } = state;
       let { list_queryString: queryString } = state;
       if (
         !queryString ||
@@ -56,7 +63,7 @@ export default {
         queryString === '?' ||
         queryString === 'url:'
       ) {
-        return list[viewing_list] || [];
+        return list[viewing_list_name] || [];
       }
 
       queryString = queryString.toLowerCase();
@@ -64,7 +71,7 @@ export default {
       if (queryString.startsWith(':')) {
         queryString = queryString.slice(1);
         // console.log('space search', queryString);
-        return list[viewing_list].filter((circle) => {
+        return list[viewing_list_name].filter((circle) => {
           return circle.space?.toLowerCase().includes(queryString);
         });
       }
@@ -72,7 +79,7 @@ export default {
       if (queryString.startsWith('?')) {
         queryString = queryString.slice(1);
         // console.log('name/description search', queryString);
-        return list[viewing_list].filter((circle) => {
+        return list[viewing_list_name].filter((circle) => {
           const { circle_name, description } = circle;
           return (
             circle_name?.toLowerCase().includes(queryString) ||
@@ -84,12 +91,12 @@ export default {
       if (queryString.startsWith('url:')) {
         queryString = queryString.slice(1);
         // console.log('name/description search', queryString);
-        return list[viewing_list].filter((circle) => {
+        return list[viewing_list_name].filter((circle) => {
           return circle.info_url?.toLowerCase().includes(queryString);
         });
       }
 
-      return list[viewing_list].filter((circle) => {
+      return list[viewing_list_name].filter((circle) => {
         // console.log('normal search', queryString);
         const { space, circle_name, description } = circle;
         return (
@@ -142,7 +149,7 @@ export default {
     },
     switchViewList(state, list_name) {
       state.viewing_page = 'list';
-      state.viewing_list = list_name;
+      state.viewing_list_name = list_name;
     },
     setListQuery(state, queryString = '') {
       state.list_queryString = queryString;

@@ -4,7 +4,7 @@
     button.text_style(
       v-for="(list_name, idx) in list_names"
       @click="$emit('switchViewList', list_name)"
-      :class="{'isViewing': viewing_page === 'list' && viewing_list===list_name}"
+      :class="{'isViewing': viewing_page === 'list' && viewing_list_name===list_name}"
       :style="{'--list_count': `'${idx+1}'`, '--list_name': `'${list_name}'` }"
     ) 
       i.las.la-list-ul
@@ -21,7 +21,7 @@
 <script>
 export default {
   name: 'listView_footer',
-  props: ['viewing_page', 'viewing_list', 'list_names', 'hasMap'],
+  props: ['viewing_page', 'viewing_list_name', 'list_names', 'hasMap'],
   // setup() {},
   computed: {},
   methods: {

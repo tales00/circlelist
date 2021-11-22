@@ -1,7 +1,7 @@
 <template lang="pug">
 .circle_list
   .circle_info
-    h3 {{ viewing_list }}
+    h3 {{ viewing_list_data?.description || viewing_list_name }}
   .list_view_mode_switch
     button.text_style(
       @click="switch_view_mode('list')"
@@ -19,6 +19,7 @@
     :class="['view_in_'+view_mode]"
     :style="headerCssName"
   )
+    caption {{ viewing_list_data?.description || viewing_list_name }}
     colgroup
       col.space
       col.circle_name
@@ -43,7 +44,7 @@
 <script>
 export default {
   name: 'circle_list',
-  props: ['viewing_list', 'header', 'list'],
+  props: ['viewing_list_name', 'viewing_list_data', 'header', 'list'],
   // setup() {},
   data() {
     return {
@@ -94,6 +95,10 @@ export default {
   width: calc(100% - 1rem);
   margin: 0 auto;
 
+  caption {
+    display: none;
+  }
+
   tbody {
     td {
       // &.space::before {
@@ -113,7 +118,7 @@ export default {
         font-weight: bold;
       }
       &.description {
-        font-size: 0.8rem;
+        // font-size: 0.8rem;
       }
       &.info_url {
         a {
@@ -246,6 +251,7 @@ export default {
             padding: 0.6rem 0.4rem;
           }
           &.description {
+            font-size: 0.9rem;
             padding: 1rem 1rem;
           }
           &.info_url {

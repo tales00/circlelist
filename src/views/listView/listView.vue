@@ -13,7 +13,7 @@ AppScaffold.listView(
   template(v-slot:footer)
     listView_footer(
       :viewing_page="viewing_page"
-      :viewing_list="viewing_list"
+      :viewing_list_name="viewing_list_name"
       :list_names="list_names"
       :hasMap="hasMap"
       @switchViewList="switchViewList"
@@ -24,8 +24,9 @@ AppScaffold.listView(
   template(v-if="isReady")
     circle_list_table(
       v-if="viewing_page === 'list'"
-      :viewing_list="viewing_list"
-      :header="setting.header[viewing_list]"
+      :viewing_list_name="viewing_list_name"
+      :viewing_list_data="viewing_list_data"
+      :header="setting.header[viewing_list_name]"
       :list="list_search"
     )
     venue_maps(
@@ -97,7 +98,7 @@ export default {
       'setting',
       'list',
       'viewing_page',
-      'viewing_list',
+      'viewing_list_name',
       'list_count',
     ]),
     ...mapGetters('viewing_list/', [
@@ -108,6 +109,7 @@ export default {
       'isReady',
       'isEvNameCurrect',
       'list_names',
+      'viewing_list_data',
       'hasMap',
     ]),
   },
