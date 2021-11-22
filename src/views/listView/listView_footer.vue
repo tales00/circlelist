@@ -3,7 +3,7 @@
   .list_switch
     button.text_style(
       v-for="(list_name, idx) in list_names"
-      @click="switchViewList(list_name)"
+      @click="$emit('switchViewList', list_name)"
       :class="{'isViewing': viewing_page === 'list' && viewing_list===list_name}"
       :style="{'--list_count': `'${idx+1}'`, '--list_name': `'${list_name}'` }"
     ) 
@@ -13,36 +13,20 @@
   .map_switch
     button.text_style(
       v-if="hasMap"
-      @click="switchViewPage('map')"
+      @click="$emit('switchViewPage', 'map')"
       :class="{'isViewing': viewing_page === 'map'}"
     ) #[i.las.la-map]
 </template>
 
 <script>
-import {
-  // mapMutations,
-  mapState,
-  mapGetters,
-  mapMutations,
-  // mapActions ,
-} from 'vuex';
-
 export default {
   name: 'listView_footer',
+  props: ['viewing_page', 'viewing_list', 'list_names', 'hasMap'],
   // setup() {},
-  computed: {
-    ...mapState('viewing_list/', ['viewing_page', 'viewing_list']),
-    ...mapGetters('viewing_list/', ['list_names', 'hasMap']),
-  },
+  computed: {},
   methods: {
-    ...mapMutations('viewing_list/', [
-      'switchViewList',
-      'switchViewPage',
-      'setListQuery',
-    ]),
     onSearchInput(ev) {
-      // console.log('setListQuery', ev.target.value);
-      this.setListQuery(ev.target.value);
+      this.$emit('setListQuery', ev.target.value);
     },
   },
 };

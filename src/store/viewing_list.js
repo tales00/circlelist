@@ -10,7 +10,7 @@ let default_state = () => ({
   setting: {
     header: {},
     config: [],
-    list: {},
+    list: [],
     venue_map: [],
     custom: [],
   },
@@ -45,7 +45,7 @@ export default {
       );
     },
     list_names(state) {
-      return state.setting.list.map((_list) => _list.key);
+      return state.setting?.list.map((_list) => _list.key) || [];
     },
     list_search(state) {
       const { list, viewing_list } = state;
@@ -111,6 +111,11 @@ export default {
     },
   },
   mutations: {
+    resetState(state) {
+      Object.entries(default_state()).forEach(([key, value]) => {
+        state[key] = value;
+      });
+    },
     setStatus(state, { name, code }) {
       if (name in state.status) {
         state.status[name] = code;

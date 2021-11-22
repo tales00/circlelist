@@ -1,15 +1,36 @@
 <template lang="pug">
-.listView(v-if="isReady")
-  circle_list_table(
-    v-if="viewing_page === 'list'"
-    :viewing_list="viewing_list"
-    :header="setting.header[viewing_list]"
-    :list="list_search"
-  )
-  venue_maps(
-    v-if="viewing_page === 'map'"
-  )
-.listView(v-else) 載入中
+AppScaffold.listView(
+  mainBgColor="hsl(0, 0%, 94%)"
+  mainMaxWidth="var(--app-max-width)"
+  :isHeaderSticky="true"
+  :isFooterSticky="true"
+)
+  template(v-slot:header)
+    listView_header
+
+  template(v-slot:footer)
+    listView_footer(
+      :viewing_page="viewing_page"
+      :viewing_list="viewing_list"
+      :list_names="list_names"
+      :hasMap="hasMap"
+      @switchViewList="switchViewList"
+      @switchViewPage="switchViewPage"
+      @setListQuery="setListQuery"
+    )
+
+  template(v-if="isReady")
+    circle_list_table(
+      v-if="viewing_page === 'list'"
+      :viewing_list="viewing_list"
+      :header="setting.header[viewing_list]"
+      :list="list_search"
+    )
+    venue_maps(
+      v-if="viewing_page === 'map'"
+    )
+  template(v-else)
+    .listView 載入中
 
 </template>
 
@@ -20,15 +41,17 @@ import listView_header from './listView_header.vue';
 import listView_footer from './listView_footer.vue';
 import circle_list_table from './circle_list_table.vue';
 import venue_maps from './venue_maps.vue';
+import AppScaffold from '@/components/AppScaffold.vue';
 
 export default {
   name: 'listView',
   props: ['evName', 'listId'],
   components: {
+    AppScaffold,
+    listView_header,
+    listView_footer,
     circle_list_table,
     venue_maps,
-    // listView_header,
-    // listView_footer,
   },
   // setup() {},
   // data() { return {}; },
@@ -82,23 +105,24 @@ export default {
       'list_search',
       'isReady',
       'isEvNameCurrect',
+      'list_names',
+      'hasMap',
     ]),
   },
   methods: {
     ...mapActions('viewing_list/', ['initFromListId']),
-    ...mapMutations('viewing_list/', ['setStatus', 'switchViewList']),
-    ...mapMutations('app/', [
-      'resetApp',
-      'setHeader',
-      'setFooter',
-      'setHeaderSticky',
-      'setFooterSticky',
+    ...mapMutations('viewing_list/', [
+      'setStatus',
+      'switchViewList',
+      'switchViewPage',
+      'setListQuery',
     ]),
+    ...mapMutations('app/', ['resetApp']),
     init() {
-      this.setHeader(listView_header);
-      this.setHeaderSticky(true);
-      this.setFooter(listView_footer);
-      this.setFooterSticky(true);
+      // this.setHeader(listView_header);
+      // this.setHeaderSticky(true);
+      // this.setFooter(listView_footer);
+      // this.setFooterSticky(true);
     },
   },
   async created() {
