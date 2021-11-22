@@ -5,26 +5,20 @@
 </template>
 
 <script>
-import {
-  // mapMutations,
-  // mapState,
-  mapGetters,
-  // mapActions ,
-} from 'vuex';
+// import {
+//   // mapMutations,
+//   // mapState,
+//   // mapGetters,
+//   // mapActions ,
+// } from 'vuex';
 import stack from '@/components/Stack.vue';
 export default {
   name: 'listView_header',
+  props: ['eventName'],
   components: {
     stack,
   },
-  computed: {
-    ...mapGetters('viewing_list/', [
-      'eventName',
-      'allNames',
-      'shortestName',
-      'isEvNameCurrect',
-    ]),
-  },
+  // computed: {},
 };
 </script>
 

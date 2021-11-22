@@ -6,7 +6,9 @@ AppScaffold.listView(
   :isFooterSticky="true"
 )
   template(v-slot:header)
-    listView_header
+    listView_header(
+      :eventName="eventName"
+    )
 
   template(v-slot:footer)
     listView_footer(
