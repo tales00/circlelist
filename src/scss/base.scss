@@ -70,10 +70,10 @@ html {
 
   // font-size: clamp(12px, calc(100vw / 30), 20px);
   // font-size: clamp(14px, calc(100vw / 34), 22px);
-  font-size: clamp(12px, calc(100vw / 42), 22px);
-  @media screen and (max-height: $max-mobile) and (orientation: landscape) {
-    font-size: clamp(12px, calc(100vmin / 42), 22px);
-  }
+  font-size: clamp(12px, calc(100vw / 42), 24px);
+  // @media screen and (max-height: $max-mobile) and (orientation: landscape) {
+  //   font-size: clamp(12px, calc(100vmin / 42), 22px);
+  // }
   line-height: 1.2;
   // height: 100%;
   height: -webkit-fill-available;

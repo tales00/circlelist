@@ -21,6 +21,7 @@
   )
     caption {{ viewing_list_data?.description || viewing_list_name }}
     colgroup
+      col.option
       col.space
       col.circle_name
       col.description(v-if="header?.description")
@@ -28,16 +29,26 @@
 
     thead
       tr
+        td.option
         td.space {{ header?.space }}
         td.circle_name {{ header?.circle_name }}
         td.description(v-if="header?.description") {{ header?.description }}
         td.info_url(v-if="header?.info_url") {{ header?.info_url }}
     tbody
       tr(v-for="circle in list")
+        td.option
+          .star
+            button.text_style #[i.lar.la-star]
+          .share
+            button.text_style #[i.las.la-share]
         td.space {{ circle?.space }}
         td.circle_name {{ circle?.circle_name }}
         td.description(v-if="header?.description") {{ circle?.description }}
-        td.info_url(v-if="header?.info_url") #[a(:href="circle.info_url" target="blank") Link]
+
+        td.info_url(v-if="header?.info_url") 
+          a(:href="circle.info_url" target="blank")
+            i.las.la-link
+            span.link_text Link
 
 </template>
 
@@ -83,7 +94,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// @import '@/scss/_modules/_variables';
+@import '@/scss/_modules/_variables';
+
 .list_view_mode_switch {
   display: flex;
   justify-content: flex-end;
@@ -93,7 +105,10 @@ export default {
 }
 .circle_list_table {
   width: calc(100% - 1rem);
+  max-width: 100%;
   margin: 0 auto;
+
+  transition: max-width, 0.2s 0.1s ease-out;
 
   caption {
     display: none;
@@ -117,33 +132,68 @@ export default {
       &.circle_name {
         font-weight: bold;
       }
-      &.description {
-        // font-size: 0.8rem;
+      // &.description {}
+      &.option {
+        .star,
+        .share {
+          margin-bottom: 1rem;
+        }
+        button {
+          // border: 1px solid gray;
+          border-radius: 0.3rem;
+          text-align: center;
+          padding: 0.3rem 0.4rem;
+          background-color: transparent;
+          font-size: 1.4rem;
+        }
       }
       &.info_url {
         a {
           display: block;
-          border: 1px solid gray;
+          // border: 1px solid gray;
           border-radius: 0.3rem;
           text-align: center;
-          padding: 0.2rem 0.6rem;
+          padding: 0.2rem 0.4rem;
         }
       }
     }
   }
   &.view_in_table {
+    max-width: 60rem;
     colgroup col {
       &.space {
-        width: 8rem;
+        width: 5.5rem;
       }
       &.circle_name {
         width: auto;
       }
       &.description {
-        width: min-content;
+        width: auto;
+      }
+      &.option {
+        width: 5rem;
+        @media screen and (max-width: $size-sm - 1) {
+          width: 3.5rem;
+        }
       }
       &.info_url {
         width: 5rem;
+        @media screen and (max-width: $size-sm - 1) {
+          width: 3.5rem;
+        }
+      }
+    }
+    tbody td {
+      // &.space { }
+      // &.circle_name { }
+      // &.description { }
+      // &.option { }
+      &.info_url {
+        @media screen and (max-width: $size-sm - 1) {
+          .link_text {
+            display: none;
+          }
+        }
       }
     }
   }
@@ -173,9 +223,24 @@ export default {
         }
         &.circle_name {
           grid-area: circle_name;
+          display: flex;
+          align-items: center;
         }
         &.description {
           grid-area: description;
+        }
+        &.option {
+          display: contents;
+          .star,
+          .share {
+            margin: 0;
+          }
+          .star {
+            grid-area: star;
+          }
+          .share {
+            grid-area: share;
+          }
         }
         &.info_url {
           grid-area: info_url;
@@ -183,14 +248,15 @@ export default {
       }
     }
     &.view_in_list {
+      max-width: 50rem;
       grid-template-columns: 1fr;
       tr {
         display: grid;
-        grid-template-columns: minmax(6rem, auto) 1fr minmax(6rem, auto);
+        grid-template-columns: minmax(6rem, auto) 1fr repeat(2, 3rem);
         grid-template-rows: auto auto;
         grid-template-areas:
-          'space circle_name circle_name'
-          'space description info_url';
+          'space circle_name star share'
+          '...   description info_url info_url';
       }
       td {
         &.space {
@@ -211,6 +277,15 @@ export default {
           // grid-area: description;
           padding: 1rem 0;
         }
+        &.option {
+          .star,
+          .share {
+            border-bottom: 1px solid gray;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
         &.info_url {
           align-self: center;
           justify-self: center;
@@ -222,7 +297,13 @@ export default {
       width: calc(100% - 1rem);
       margin: 0 auto;
       grid-template-columns: repeat(auto-fill, minmax(12.6rem, 1fr));
+
+      @media screen and (min-width: $min-wide) {
+        max-width: 80rem;
+      }
+
       gap: 1rem 0.4rem;
+
       tbody {
         display: contents;
       }
@@ -230,12 +311,13 @@ export default {
         border: 0.1rem solid lightgray;
         border-left: 0.2rem solid gray;
         display: grid;
+        grid-template-columns: auto 1fr;
         grid-template-rows: auto auto 1fr auto;
         grid-template-areas:
-          'circle_name'
-          'space'
-          'description'
-          'info_url';
+          'star circle_name'
+          'space space'
+          'description description'
+          'share info_url';
 
         td {
           &.space {
@@ -253,6 +335,21 @@ export default {
           &.description {
             font-size: 0.9rem;
             padding: 1rem 1rem;
+          }
+          &.option {
+            .star,
+            .share {
+              border-top: 0.1rem solid lightgray;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            .star {
+              padding: 0.6rem 0.4rem;
+            }
+            .share {
+              padding: 0.4rem;
+            }
           }
           &.info_url {
             border-top: 0.1rem solid lightgray;
