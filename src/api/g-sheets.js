@@ -4,6 +4,12 @@ export const getSheet = ({ sheetID, tableName }) => {
   const fetchURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
   const specfySheetName = (tableName && `&sheet=${tableName}`) ?? '';
   return fetch(fetchURL + specfySheetName)
+    .then((res) => {
+      if (res.status === 404) {
+        throw Error('fetch error: 404');
+      }
+      return res;
+    })
     .then((res) => res.text())
     .then((text) => JSON.parse(text.substr(47).slice(0, -2)))
     .then((rowJson) => {
@@ -58,22 +64,9 @@ export const getSettings = (sheetID) =>
     .then(convertSheetRowArray)
     .then(({ rows }) => {
       let current_group = 'none';
-      const setting_name_zh_eng = {
-        活動名稱: 'event_name',
-        別名: 'alias',
-        開始日: 'start',
-        舉行天數: 'for_days',
-        活動資訊: 'event_info',
-        主辦單位: 'host_name',
-        主辦單位網站: 'host_site_url',
-        主辦單位信箱: 'host_mail',
-      };
       return rows.reduce((groups, setting) => {
         let { key } = setting;
         const { group, value, description, type } = setting;
-        if (key in setting_name_zh_eng) {
-          key = setting_name_zh_eng[key];
-        }
 
         if (group) {
           current_group = group;
@@ -88,17 +81,66 @@ export const getSettings = (sheetID) =>
       }, {});
     })
     .then((setting) => {
-      setting.config = setting.config.reduce(
-        (config, { key, value, description, type }) => {
-          config[key] = { value, description, type };
-          return config;
-        },
-        {},
-      );
+      const { config, list } = setting;
+      if (!config) {
+        throw Error('missing config');
+      }
+      if (!list) {
+        throw Error('missing list');
+      }
+      //
+      const config_key_zh_eng = {
+        活動名稱: 'event_name',
+        別名: 'alias',
+        開始日: 'start',
+        舉行天數: 'for_days',
+      };
+      setting.config = setting?.config?.reduce((config, { key, value }) => {
+        if (key in config_key_zh_eng) {
+          key = config_key_zh_eng[key];
+        }
+        config[key] = { value };
+        return config;
+      }, {});
+
+      //
+      const host_key_zh_eng = {
+        活動資訊: 'event_info',
+        主辦單位: 'host_name',
+        主辦單位網站: 'host_site_url',
+        主辦單位信箱: 'host_mail',
+      };
+      setting.host = setting?.host?.reduce((host, { key, value }) => {
+        if (key in host_key_zh_eng) {
+          key = host_key_zh_eng[key];
+        }
+        host[key] = { value };
+        return host;
+      }, {});
+
+      //
+      const creator_key_zh_eng = {
+        名稱: 'creator_name',
+        網站: 'creator_site_url',
+        信箱: 'creator_mail',
+        社群: 'creator_sns_url',
+        留言: 'creator_comment',
+      };
+      setting.creator = setting?.creator?.reduce((creator, { key, value }) => {
+        if (key in creator_key_zh_eng) {
+          key = creator_key_zh_eng[key];
+        }
+        creator[key] = { value };
+        return creator;
+      }, {});
+
+      //
       ['list', 'venue_map'].forEach((group_name) => {
-        setting[group_name].forEach((item) => {
-          delete item.type;
-        });
+        if (group_name in setting) {
+          setting[group_name].forEach((item) => {
+            delete item.type;
+          });
+        }
       });
 
       return setting;
@@ -106,14 +148,9 @@ export const getSettings = (sheetID) =>
 
 //
 export const getList = (sheetID, tableName) =>
-  getSheet({
-    sheetID,
-    tableName,
-  })
+  getSheet({ sheetID, tableName })
     .then(convertSheetRowArray)
     .then(({ cols, rows: list }) => {
-      // let current_day = '0';
-
       const info_name_zh_eng = {
         編號: 'space',
         名稱: 'circle_name',

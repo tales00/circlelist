@@ -1,9 +1,12 @@
 import { getSettings, getList } from '@/api/g-sheets';
+
 let default_state = () => ({
   evName: undefined,
   listId: undefined,
   status: {
     isLoading: false,
+    isSettingReady: false,
+    isListReady: false,
     isError: false,
     errorMessage: '',
   },
@@ -13,6 +16,8 @@ let default_state = () => ({
     list: [],
     venue_map: [],
     custom: [],
+    host: {},
+    creator: {},
   },
   list: {},
   list_queryString: '',
@@ -23,6 +28,11 @@ export default {
   namespaced: true,
   state: default_state(),
   getters: {
+    sheet_url({ listId }) {
+      return listId
+        ? `https://docs.google.com/spreadsheets/d/${listId}/edit`
+        : undefined;
+    },
     eventName(state, getters) {
       return (
         state.setting.config.event_name?.value ||
@@ -110,6 +120,14 @@ export default {
       const { isLoading, isError } = state.status;
       return !isLoading && !isError;
     },
+    isSettingReady(state) {
+      const { isSettingReady } = state.status;
+      return !!isSettingReady;
+    },
+    isListReady(state) {
+      const { isListReady } = state.status;
+      return !!isListReady;
+    },
     isEvNameCurrect(state, getters) {
       return getters.allNames.includes(state.evName);
     },
@@ -131,10 +149,6 @@ export default {
     setSetting(state, setting) {
       Object.keys(setting).forEach((settingKey) => {
         if (settingKey in state.setting) {
-          // console.log('setSetting', {
-          //   key: settingKey,
-          //   value: setting[settingKey],
-          // });
           state.setting[settingKey] = setting[settingKey];
         }
       });
@@ -158,33 +172,55 @@ export default {
   actions: {
     async initFromListId({ commit, state }, { listId, evName }) {
       commit('setStatus', { name: 'isLoading', code: true });
-
       state.listId = listId;
       state.evName = evName;
-      const setting = await getSettings(listId);
-      commit('setSetting', setting);
 
-      let header = {};
-      if (setting.list.length) {
+      // console.log({ listId, evName });
+      // commit('setStatus', { name: 'isError', code: true });
+      // commit('setStatus', { name: 'errorMessage', code: 'test-error' });
+
+      try {
+        const setting = await getSettings(listId);
+        if (!setting) {
+          throw Error('load-setting-error');
+        }
+        commit('setSetting', setting);
+        commit('setStatus', { name: 'isSettingReady', code: true });
+
+        if (!setting?.list.length) {
+          throw Error('load-list-error');
+        }
+
+        let header = {};
         setting.list.forEach(async (_listData) => {
           const { header: thisHeader, list: thisList } = await getList(
             listId,
             _listData.value,
           );
+          if (!thisList) {
+            throw Error('load-list-error');
+          }
+
           commit('addList', { name: _listData.key, listData: thisList });
           header[_listData.key] = thisHeader;
         });
-      } else {
+
+        commit('setSetting', { header });
+        commit('setStatus', { name: 'isListReady', code: true });
+
+        commit('setStatus', { name: 'isLoading', code: false });
+        commit('setStatus', { name: 'isError', code: false });
+        commit('setStatus', { name: 'errorMessage', code: '' });
+
+        // throw Error('test-error');
+      } catch (error) {
+        commit('setStatus', { name: 'isSettingReady', code: false });
+        commit('setStatus', { name: 'isListReady', code: false });
         commit('setStatus', { name: 'isLoading', code: false });
         commit('setStatus', { name: 'isError', code: true });
-        commit('setStatus', { name: 'errorMessage', code: 'no-list-setting' });
+        commit('setStatus', { name: 'errorMessage', code: error });
         return;
       }
-      commit('setSetting', { header });
-
-      commit('setStatus', { name: 'isLoading', code: false });
-      commit('setStatus', { name: 'isError', code: false });
-      commit('setStatus', { name: 'errorMessage', code: '' });
     },
   },
 };

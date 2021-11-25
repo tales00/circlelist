@@ -38,13 +38,20 @@ AppScaffold.listView(
       v-if="viewing_page === 'map'"
     )
   template(v-else)
-    .listView 載入中
+    listView_loading(
+      :isReady="isReady"
+      :listId="listId"
+      :sheet_url="sheet_url"
+      :status="status"
+    )
+  
 
 </template>
 
 <script>
 // import { getSettings, getList } from '@/api/g-sheets';
 import { mapMutations, mapState, mapGetters, mapActions } from 'vuex';
+import listView_loading from './listView_loading.vue';
 import listView_header from './listView_header.vue';
 import listView_footer from './listView_footer.vue';
 import circle_list_table from './circle_list_table.vue';
@@ -57,6 +64,7 @@ export default {
   props: ['evName', 'listId'],
   components: {
     AppScaffold,
+    listView_loading,
     listView_header,
     listView_footer,
     circle_list_table,
@@ -109,11 +117,13 @@ export default {
       'list_count',
     ]),
     ...mapGetters('viewing_list/', [
+      'sheet_url',
       'eventName',
       'allNames',
       'shortestName',
       'list_search',
       'isReady',
+      'sheet_url',
       'isEvNameCurrect',
       'list_names',
       'viewing_list_data',
@@ -156,9 +166,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-// .event_name {
-//   font-size: 1.8rem;
-// }
-</style>
