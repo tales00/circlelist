@@ -8,6 +8,8 @@ AppScaffold.listView(
   template(v-slot:header)
     listView_header(
       :eventName="eventName"
+      :viewing_page="viewing_page"
+      @switchViewPage="switchViewPage"
     )
 
   template(v-slot:footer)
@@ -29,6 +31,9 @@ AppScaffold.listView(
       :header="setting.header[viewing_list_name]"
       :list="list_search"
     )
+    event_info(
+      v-if="viewing_page === 'event'"
+    )
     venue_maps(
       v-if="viewing_page === 'map'"
     )
@@ -44,6 +49,7 @@ import listView_header from './listView_header.vue';
 import listView_footer from './listView_footer.vue';
 import circle_list_table from './circle_list_table.vue';
 import venue_maps from './venue_maps.vue';
+import event_info from './event_info.vue';
 import AppScaffold from '@/components/AppScaffold.vue';
 
 export default {
@@ -55,6 +61,7 @@ export default {
     listView_footer,
     circle_list_table,
     venue_maps,
+    event_info,
   },
   // setup() {},
   // data() { return {}; },
