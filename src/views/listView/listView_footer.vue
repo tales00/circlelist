@@ -8,14 +8,20 @@
       :style="{'--list_count': `'${idx+1}'`, '--list_name': `'${list_name}'` }"
     ) 
       i.las.la-list-ul
+
   .search_bar
-    input(@keyup="onSearchInput")
+    input(
+      :class="{disable: viewing_page !== 'list'}"
+      @keyup="onSearchInput"
+    )
+
   .map_switch
     button.text_style(
       v-if="hasMap"
       @click="$emit('switchViewPage', 'map')"
       :class="{'isViewing': viewing_page === 'map'}"
     ) #[i.las.la-map]
+    
 </template>
 
 <script>
