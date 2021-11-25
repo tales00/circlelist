@@ -108,7 +108,7 @@ export default {
   max-width: 100%;
   margin: 0 auto;
 
-  transition: max-width, 0.2s 0.1s ease-out;
+  transition: max-width, 0.3s ease-out;
 
   caption {
     display: none;
@@ -136,24 +136,39 @@ export default {
       &.option {
         .star,
         .share {
-          margin-bottom: 1rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
         button {
-          // border: 1px solid gray;
+          border: 1px solid transparent;
           border-radius: 0.3rem;
           text-align: center;
           padding: 0.3rem 0.4rem;
           background-color: transparent;
           font-size: 1.4rem;
+          &:hover {
+            border-color: gray;
+          }
         }
       }
       &.info_url {
         a {
-          display: block;
-          // border: 1px solid gray;
+          // display: block;
+          border: 1px solid transparent;
           border-radius: 0.3rem;
           text-align: center;
           padding: 0.2rem 0.4rem;
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          &:hover {
+            border-color: gray;
+          }
+          .las {
+            font-size: 1.2rem;
+          }
         }
       }
     }
@@ -173,7 +188,7 @@ export default {
       &.option {
         width: 5rem;
         @media screen and (max-width: $size-sm - 1) {
-          width: 3.5rem;
+          width: 3rem;
         }
       }
       &.info_url {
@@ -187,7 +202,12 @@ export default {
       // &.space { }
       // &.circle_name { }
       // &.description { }
-      // &.option { }
+      &.option {
+        .star,
+        .share {
+          margin-bottom: 1rem;
+        }
+      }
       &.info_url {
         @media screen and (max-width: $size-sm - 1) {
           .link_text {
@@ -231,10 +251,6 @@ export default {
         }
         &.option {
           display: contents;
-          .star,
-          .share {
-            margin: 0;
-          }
           .star {
             grid-area: star;
           }
@@ -281,9 +297,9 @@ export default {
           .star,
           .share {
             border-bottom: 1px solid gray;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            // display: flex;
+            // justify-content: center;
+            // align-items: center;
           }
         }
         &.info_url {
@@ -335,11 +351,12 @@ export default {
           &.description {
             font-size: 0.9rem;
             padding: 1rem 1rem;
+            border-bottom: 0.1rem solid lightgray;
           }
           &.option {
+            // align-self: center;
             .star,
             .share {
-              border-top: 0.1rem solid lightgray;
               display: flex;
               justify-content: center;
               align-items: center;
@@ -352,10 +369,11 @@ export default {
             }
           }
           &.info_url {
-            border-top: 0.1rem solid lightgray;
+            // border-top: 0.1rem solid lightgray;
             padding: 0.4rem;
-            padding-bottom: 0.6rem;
+            // padding-bottom: 0.6rem;
             display: flex;
+            align-self: center;
             justify-content: end;
           }
         }
