@@ -1,29 +1,38 @@
 import { getSettings, getList } from '@/api/g-sheets';
+import { db } from '@/api/db';
 
-let default_state = () => ({
+const default_status = () => ({
+  isFromCache: false,
+  isLoading: false,
+  isSettingReady: false,
+  isListReady: false,
+  isError: false,
+  errorMessage: '',
+});
+
+const default_setting = () => ({
+  header: {},
+  config: [],
+  list: [],
+  venue_map: [],
+  custom: [],
+  host: {},
+  creator: {},
+});
+
+const default_state = () => ({
   evName: undefined,
   listId: undefined,
-  status: {
-    isLoading: false,
-    isSettingReady: false,
-    isListReady: false,
-    isError: false,
-    errorMessage: '',
-  },
-  setting: {
-    header: {},
-    config: [],
-    list: [],
-    venue_map: [],
-    custom: [],
-    host: {},
-    creator: {},
-  },
+  status: default_status(),
+  setting: default_setting(),
   list: {},
   list_queryString: '',
   viewing_list_name: '',
   viewing_page: '',
+  loadAt: 0,
+  expire: 0,
 });
+
 export default {
   namespaced: true,
   state: default_state(),
@@ -117,8 +126,8 @@ export default {
       });
     },
     isReady(state) {
-      const { isLoading, isError } = state.status;
-      return !isLoading && !isError;
+      const { isLoading, isSettingReady, isListReady, isError } = state.status;
+      return isSettingReady && isListReady && !isLoading && !isError;
     },
     isSettingReady(state) {
       const { isSettingReady } = state.status;
@@ -170,8 +179,8 @@ export default {
     },
   },
   actions: {
-    async initFromListId({ commit, state }, { listId, evName }) {
-      commit('setStatus', { name: 'isLoading', code: true });
+    async initFromListId({ dispatch, commit, state }, { listId, evName }) {
+      commit('resetState');
       state.listId = listId;
       state.evName = evName;
 
@@ -180,40 +189,21 @@ export default {
       // commit('setStatus', { name: 'errorMessage', code: 'test-error' });
 
       try {
-        const setting = await getSettings(listId);
-        if (!setting) {
-          throw Error('load-setting-error');
+        const cachedListDB = await db.event.where('id').equals(listId);
+        const isListCached = await cachedListDB.count();
+        const [cache] = isListCached ? await cachedListDB.toArray() : [false];
+        // console.log('isListCached', { isListCached, cache });
+
+        if (cache?.expire > Date.now()) {
+          // console.log('cache', cache);
+          console.log('use cache');
+          await dispatch('loadSheetsFromCache', cache);
+        } else {
+          console.log('get from net');
+          await dispatch('loadSheetsFromNet', { listId, evName });
         }
-        commit('setSetting', setting);
-        commit('setStatus', { name: 'isSettingReady', code: true });
-
-        if (!setting?.list.length) {
-          throw Error('load-list-error');
-        }
-
-        let header = {};
-        setting.list.forEach(async (_listData) => {
-          const { header: thisHeader, list: thisList } = await getList(
-            listId,
-            _listData.value,
-          );
-          if (!thisList) {
-            throw Error('load-list-error');
-          }
-
-          commit('addList', { name: _listData.key, listData: thisList });
-          header[_listData.key] = thisHeader;
-        });
-
-        commit('setSetting', { header });
-        commit('setStatus', { name: 'isListReady', code: true });
-
-        commit('setStatus', { name: 'isLoading', code: false });
-        commit('setStatus', { name: 'isError', code: false });
-        commit('setStatus', { name: 'errorMessage', code: '' });
-
-        // throw Error('test-error');
       } catch (error) {
+        // commit('setStatus', { name: 'isFromCache', code: false });
         commit('setStatus', { name: 'isSettingReady', code: false });
         commit('setStatus', { name: 'isListReady', code: false });
         commit('setStatus', { name: 'isLoading', code: false });
@@ -221,6 +211,114 @@ export default {
         commit('setStatus', { name: 'errorMessage', code: error });
         return;
       }
+
+      console.log('done');
+      commit('setStatus', { name: 'isLoading', code: false });
+      commit('setStatus', { name: 'isError', code: false });
+      commit('setStatus', { name: 'errorMessage', code: '' });
+
+      // save to local
+    },
+    async loadSheetsFromCache({ commit, state }, cache) {
+      // console.log('cache', cache);
+      state.loadAt = cache.loadAt;
+      state.expire = cache.expire;
+
+      commit('setSetting', cache.setting);
+      commit('setStatus', { name: 'isSettingReady', code: true });
+
+      Object.entries(cache.list).forEach(([key, _listData]) => {
+        // console.log('_listData', { key, _listData });
+        commit('addList', { name: key, listData: _listData });
+      });
+
+      commit('setStatus', { name: 'isFromCache', code: true });
+      commit('setStatus', { name: 'isListReady', code: true });
+    },
+    async loadSheetsFromNet({ dispatch, commit }, { listId, evName }) {
+      commit('setStatus', { name: 'isLoading', code: true });
+
+      const setting = await getSettings(listId);
+      if (!setting) {
+        throw Error('load-setting-error');
+      }
+      commit('setSetting', setting);
+      commit('setStatus', { name: 'isSettingReady', code: true });
+
+      if (!setting?.list.length) {
+        throw Error('load-list-error');
+      }
+
+      setting.header = {};
+      let _list = {};
+      // console.log('setting.list', setting.list);
+      let _listPromiseArray = setting.list
+        .map(async ({ value: tableName, key }) => {
+          // console.log('tableName', tableName);
+          const { header: thisHeader, list: thisList } = await getList(
+            listId,
+            tableName,
+          );
+          if (!thisList) {
+            throw Error('load-list-error');
+          }
+          setting.header[key] = thisHeader;
+          _list[key] = thisList;
+
+          return {
+            name: key,
+            listData: thisList,
+          };
+        })
+        .map((listPromise) => {
+          return listPromise.then((thisList) => {
+            // console.log('thisList', thisList);
+            commit('addList', thisList);
+          });
+        });
+      // console.log('_listPromiseArray', {
+      //   header: setting.header,
+      //   _listPromiseArray,
+      // });
+
+      Promise.allSettled(_listPromiseArray).then(() => {
+        // results.forEach((result) => console.log('allSettled', result.status));
+        // console.log('state.setting', state.setting);
+        commit('setSetting', { header: setting.header });
+        commit('setStatus', { name: 'isListReady', code: true });
+
+        const loadAt = Date.now();
+        const expire = 60 * 60 * 1000 * 3 + Date.now();
+        console.log('saveCache', {
+          id: listId,
+          evName,
+          setting,
+          list: _list,
+          loadAt,
+          expire,
+        });
+
+        dispatch('saveCache', {
+          id: listId,
+          evName,
+          setting,
+          list: _list,
+          loadAt,
+          expire,
+        });
+      });
+    },
+    saveCache({ state }, { id, evName, setting, list, loadAt, expire }) {
+      state.loadAt = loadAt;
+      state.expire = expire;
+      db.event.add({
+        id,
+        evName,
+        setting,
+        list,
+        loadAt,
+        expire,
+      });
     },
   },
 };

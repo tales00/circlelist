@@ -77,9 +77,10 @@ export default {
     isReady: {
       // immediate: true,
       handler(isReady) {
+        console.log('isReady', isReady);
         if (isReady) {
           const [firstList] = this.setting.list;
-          console.log('watch isReady', firstList.key);
+          // console.log('watch isReady', firstList.key);
           this.switchViewList(firstList.key);
         }
       },
@@ -89,7 +90,6 @@ export default {
       handler(shortName) {
         console.log('shortestName');
         if (shortName) {
-          this.init();
           if (!this.isEvNameCurrect) {
             // 如果網址中的活動名與清單中的不合，會自動把網址換成最短的活動名
             this.$router.replace({
@@ -99,11 +99,11 @@ export default {
                 listId: this.listId,
               },
             });
+            document.title =
+              (this.setting.config?.event_name?.value || shortName) +
+              ' | circleList';
           }
         }
-        document.title =
-          (this.setting.config?.event_name.value || shortName) +
-          ' | circleList';
       },
     },
   },
@@ -138,31 +138,28 @@ export default {
       'switchViewPage',
       'setListQuery',
     ]),
-    ...mapMutations('app/', ['resetApp']),
+    ...mapMutations('viewing_list/', ['resetState']),
     init() {
-      // this.setHeader(listView_header);
-      // this.setHeaderSticky(true);
-      // this.setFooter(listView_footer);
-      // this.setFooterSticky(true);
+      this.initFromListId({
+        listId: this.listId,
+        evName: this.evName,
+      });
     },
   },
+  // ff37
+  // 1gN2jSRf_vha_NGzzZmo4eoRU0uB4EB5tRzSZfJWmhZM
+  // ch10
+  // 1vmI_o2mwvSgHRu971IheGiT_3lRBwWh_Mn6DKg1qvRE
+  // ffk14
+  // 1NbL2YpuM8jLFDEf0Og_Gfk-kGzOTzJO08wqWrZEwmk0
   async created() {
-    this.resetApp();
+    this.resetState();
     console.log('listView created');
-    // ff37
-    // 1gN2jSRf_vha_NGzzZmo4eoRU0uB4EB5tRzSZfJWmhZM
-    // ch10
-    // 1vmI_o2mwvSgHRu971IheGiT_3lRBwWh_Mn6DKg1qvRE
-    // ffk14
-    // 1NbL2YpuM8jLFDEf0Og_Gfk-kGzOTzJO08wqWrZEwmk0
   },
   mounted() {
     console.log('listView mounted');
     // 從網址夾帶的 id 讀取清單資料
-    this.initFromListId({
-      listId: this.listId,
-      evName: this.evName,
-    });
+    this.init();
   },
 };
 </script>
